@@ -207,3 +207,102 @@ public class Settings {
 >   사실 아직 정확한 원리는 모르겠다.
 
 하지만 위와 같은 구현 방식을 깨트리게 하는 경우가 있다.
+
+### Singleton 패턴이 깨지는 경우
+
+#### 1. Reflection API
+
+##### App.java
+```java
+import java.lang.reflect.*;
+
+public class App {
+
+    public static void main(String[] args) throws Exception {
+
+        Settings settings1 = Settings.getInstance();
+
+        Constructor<Settings> constructor = Settings.class.geetDeclaredConstructor();
+        constructor.setAccessible(true);
+        Settings settings2 = constructor.newInstance();
+
+        System.out.println(settings1 == settings2); // false
+
+    }
+
+}
+```
+
+#### 2. Serialization
+
+###### 직렬화/역직렬화
+
+##### Settings.java
+```java
+public class Settings implements Serializable {}
+```
+
+##### App.java
+```java
+public class App {
+
+    public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
+
+        Settings settings1 = Settings.getInstance();
+        Settings settings2 = null;
+
+        try (ObjectOutput out = new ObjectOutputStream(new FileOutputStream("settings1.obj"))) {
+            out.writeObject(settings1);
+        }
+
+        try (ObjectInput in = new ObjectInputStream(new FileInputStream("settings1.obj"))) {
+            settings2 = (Settings) in.readObject();
+        }
+
+        Assert.isTrue(settings1 != settings2, "These are same instances.");
+
+    }
+
+}
+```
+
+위와 같은 방법들로 Singleton 패턴을 무마시킬 수 있다.
+Serialization의 경우에는 비교적 쉽게 막을 수 있다.
+
+###### AvoidSerializationSettings.java
+```java
+class AvoidSerailizationSettings implements Serializable {
+
+    // ...
+
+    // 역직렬화 대응방안 - 직렬화 시 사용되는 내장 메서드로 보인다.
+    protected Object readResolve() {
+        return getInstance();
+    }
+
+}
+```
+
+#### Reflection API 피하는 방법
+
+###### enum
+
+##### Settings.java
+```java
+public enum Settings {
+    INSTANCE;
+}
+```
+
+위처럼 사용하고 내부에 필요한 로직을 작성할 수 있다.
+Reflection을 막을 수 있지만, Eager Initialization처럼 미리 객체를 생성하기 때문에
+메모리를 원하는 시점에 생성할 수 없다. 또 다른 단점은 enum은 상속이 불가하다.
+
+>   enum은 이미 `Serializable`을 상속하고 있어 역직렬화에 어차피 안전하다.
+
+### Exercise
+
+-   Java에서 `enum`을 사용하지 않고 Singleton 패턴을 구현하는 방법은?
+-   `private` 생성자와 `static` 메서드를 사용하는 방법의 단점은?
+-   `enum`을 사용해 Singleton 패턴을 구현하는 장점과 단점은?
+-   `static inner` 클래스를 사용해 Singleton 패턴을 구현하라.

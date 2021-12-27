@@ -1,2 +1,5 @@
 # For Finder of OSX
 .DS_Store
+
+# For Serialized Java Object
+*.obj
