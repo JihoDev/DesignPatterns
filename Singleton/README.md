@@ -31,8 +31,8 @@ public class Settings {
 ```java
 public class App {
     public static void main(String[] args) {
-        Settings settings1 = new Setting();
-        Settings settings2 = new Setting();
+        Settings settings1 = new Settings();
+        Settings settings2 = new Settings();
         System.out.println(settings1 == settings2); // false
     }
 }
@@ -46,7 +46,7 @@ false를 출력한다.
 ##### Settings.java
 ```java
 public class Settings {
-    private Setting() {}
+    private Settings() {}
     public static Settings getInstance() {
         return new Settings();
     }
@@ -57,8 +57,8 @@ public class Settings {
 ```java
 public class App {
     public static void main(String[] args) {
-        Settings settings1 = Setting.getInstance();
-        Settings settings2 = Setting.getInstance();
+        Settings settings1 = Settings.getInstance();
+        Settings settings2 = Settings.getInstance();
         System.out.println(settings1 == settings2); // false
     }
 }
@@ -73,7 +73,7 @@ public class App {
 ```java
 public class Settings {
     private static Settings instance;
-    private Setting() {}
+    private Settings() {}
     public static Settings getInstance() {
         if (instance == null) {
             instance = new Settings();
@@ -87,8 +87,8 @@ public class Settings {
 ```java
 public class App {
     public static void main(String[] args) {
-        Settings settings1 = Setting.getInstance();
-        Settings settings2 = Setting.getInstance();
+        Settings settings1 = Settings.getInstance();
+        Settings settings2 = Settings.getInstance();
         System.out.println(settings1 == settings2); // true
     }
 }
@@ -101,9 +101,9 @@ public class App {
 
 >   위 방법은 ***Thread Safe***가 보장되지 않는다.
 
-## How to implement Thread Safe Singleton instance
+## How to implement Thread Safe Singleton instance?
 
-### 1. Using `synchronized` keyword.
+### 1. Using `synchronized` keyword
 
 ###### 동기화: 제일 간단한 방법
 
@@ -111,7 +111,7 @@ public class App {
 ```java
 public class Settings {
     private static Settings instance;
-    private Setting() {}
+    private Settings() {}
     // 한 번에 하나의 Thread만 접근할 수 있도록 메서드를 수정
     public static synchronized Settings getInstance() {
         if (instance == null) {
@@ -122,8 +122,7 @@ public class Settings {
 }
 ```
 
-하지만 이 방법에도 단점이 있다.
-동기화 처리로 인해 성능에 영향을 미친다.
+간단하지만, 동기화 처리로 성능에 영향을 미친다.
 
 ### 2. Eager Initialization with `final` keyword
 
@@ -137,7 +136,7 @@ public class Settings {
     // static field에 final 키워드까지 사용하여 미리 초기화
     // 상수가 되었기 때문에 상수 컨벤션에 맞게 대문자로 변수 이름을 변경
     private static final Settings INSTANCE = new Settings();
-    private Setting() {}
+    private Settings() {}
     public static Settings getInstance() {
         return INSTANCE;
     }
@@ -145,7 +144,7 @@ public class Settings {
 ```
 
 단점은 미리 만드는 것 자체가 단점이 될 수 있다.
-여러 기능들에 비해 잘 사용되지 않는 기능일 경우에 계속 메모리를 쥐고 있다.
+여러 기능에 비해 잘 사용되지 않는 기능일 경우에 계속 메모리를 쥐고 있다.
 
 ### 3. Double Checked Locking with `volatile`
 
@@ -183,7 +182,7 @@ public class Settings {
 
 ### 4. Static Inner Class
 
-###### 기선 픽 1 - 권장하는 방법 중 하나
+###### 기선 픽 - 권장하는 방법
 
 ##### Settings.java
 ```java
@@ -304,7 +303,7 @@ Reflection을 막을 수 있지만, Eager Initialization처럼 미리 객체를 
 
 -   Java에서 `enum`을 사용하지 않고 Singleton 패턴을 구현하는 방법은?
 -   `private` 생성자와 `static` 메서드를 사용하는 방법의 단점은?
--   `enum`을 사용해 Singleton 패턴을 구현하는 장점과 단점은?
+-   `enum`을 사용해 Singleton 패턴을 구현하는 장단점은?
 -   `static inner` 클래스를 사용해 Singleton 패턴을 구현하라.
 
 ### Conclusion
