@@ -3,3 +3,6 @@
 
 # For Serialized Java Object
 *.obj
+
+# Lecture Sources
+.idea
