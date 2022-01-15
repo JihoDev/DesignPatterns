@@ -6,7 +6,7 @@
 ## 1️⃣ Creational Patterns
 
 ### 1. [Singleton](Singleton/README.md)
-### 2. Factory Method
+### 2. [Factory Method](FactoryMethod/README.md)
 ### 3. Abstract Factory
 ### 4. Builder
 ### 5. Prototype
